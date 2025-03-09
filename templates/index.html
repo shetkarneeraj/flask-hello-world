@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/static/molecule.png" type="image/png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <title>chemAR: Augmented Reality Chemistry Learning</title>
+  <style>
+    .floating-navbar {
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.6);
+      transition: all 0.4s ease-in-out;
+    }
+    section {
+      transition: background 1.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white font-sans overflow-x-hidden">
+  <!-- Floating Navbar -->
+    <!-- Floating Navbar -->
+  <header class="floating-navbar fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-4xl py-3 px-6 flex justify-between items-center rounded-full shadow-xl">
+    <div class="flex items-center space-x-2">
+      <img src="/static/molecule.png" alt="chemAR Logo" class="w-8 h-8">
+      <div class="text-indigo-400 text-2xl font-bold">chemAR</div>
+    </div>
+    <nav class="hidden md:flex space-x-6">
+      <a href="#why-chemar" class="text-gray-300 hover:text-indigo-400 transition-colors">About</a>
+      <a href="#features" class="text-gray-300 hover:text-indigo-400 transition-colors">Features</a>
+      <a href="#contact-form" class="text-gray-300 hover:text-indigo-400 transition-colors">Contact us</a>
+      <a href="#instructions" class="text-gray-300 hover:text-indigo-400 transition-colors">Instructions</a>
+      <a href="#faq" class="text-gray-300 hover:text-indigo-400 transition-colors">FAQs</a>
+      <!-- Privacy Policy link -->
+      <a href="#privacy" id="privacy-modal-btn" class="text-gray-300 hover:text-indigo-400 transition-colors">Privacy Policy</a>
+    </nav>
+    <div class="md:hidden">
+      <button id="mobile-menu-button" class="text-gray-300 hover:text-indigo-400 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+  
+  <div id="mobile-menu" class="hidden md:hidden fixed top-16 left-1/2 transform -translate-x-1/2 w-[90%] max-w-4xl bg-gray-900 bg-opacity-80 text-white py-4 rounded-lg shadow-lg">
+    <a href="#why-chemar" class="block px-4 py-2 text-gray-300 hover:text-indigo-400 transition-colors">About</a>
+    <a href="#features" class="block px-4 py-2 text-gray-300 hover:text-indigo-400 transition-colors">Features</a>
+    <a href="#contact-form" class="block px-4 py-2 text-gray-300 hover:text-indigo-400 transition-colors">Contact us</a>
+    <a href="#instructions" class="block px-4 py-2 text-gray-300 hover:text-indigo-400 transition-colors">Instructions</a>
+    <a href="#faq" class="block px-4 py-2 text-gray-300 hover:text-indigo-400 transition-colors">FAQs</a>
+    <a href="#privacy" id="privacy-modal-btn-mobile" class="block px-4 py-2 text-gray-300 hover:text-indigo-400 transition-colors">Privacy Policy</a>
+  </div>
+
+  <!-- Flash Messages -->
+  <div id="flash-messages" class="fixed top-4 right-4 space-y-4 z-50"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const flashMessages = document.getElementById('flash-messages');
+      const messages = [
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              { category: "{{ category }}", message: "{{ message }}" },
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      ];
+
+      messages.forEach(({ category, message }) => {
+        const flashMessage = document.createElement('div');
+        flashMessage.className = `bg-${category}-500 text-white p-4 rounded-lg shadow-lg transform transition-transform translate-x-full`;
+        flashMessage.innerText = message;
+        flashMessages.appendChild(flashMessage);
+
+        setTimeout(() => {
+          flashMessage.classList.remove('translate-x-full');
+        }, 100);
+
+        setTimeout(() => {
+          flashMessage.classList.add('translate-x-full');
+          setTimeout(() => {
+            flashMessage.remove();
+          }, 500);
+        }, 3000);
+      });
+    });
+  </script>
+
+<section class="h-screen flex flex-col justify-center items-center text-center bg-gradient-to-br from-gray-800 via-gray-900 to-black">
+  <p class="mt-4 text-gray-300" data-aos="fade-up">
+    Test the latest versions!  
+    <a href="https://testflight.apple.com/join/aEEj1TQW" class="text-indigo-400 hover:underline">Try on TestFlight</a>
+  </p>
+  
+  <h1 class="text-5xl font-extrabold text-indigo-400" data-aos="fade-down">
+    Explore Chemistry with AR
+  </h1>
+  
+  <p class="text-lg text-gray-300 mt-4 max-w-lg mx-auto" data-aos="fade-up">
+    An immersive learning experience with augmented reality, interactive visualizations, and quizzes.
+  </p>
+  
+  <a href="https://apps.apple.com/in/app/chemar/id6741715736">
+      <img src="/static/download_on_app_store.png" alt="Download on the App Store" class="h-14 sm:h-28">
+    </a>
+</section>
+
+  <!-- Why chemAR Section -->
+  <section id="why-chemar" class="py-20 px-6 bg-gray-800">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Why Choose chemAR?</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Transform the Way You Learn Chemistry</p>
+        <p class="mt-6 text-lg leading-8 text-gray-300">chemAR offers an innovative, engaging, and interactive way to explore the periodic table, chemical reactions, and molecular structures.</p>
+      </div>
+      <div class="mt-10 grid max-w-4xl mx-auto grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+        <div class="flex items-center space-x-4 p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up">
+          <img src="/static/vr-glasses.png" alt="AR Learning" class="w-12 h-12">
+          <p class="text-white">Immersive Augmented Reality for better conceptual understanding.</p>
+        </div>
+        <div class="flex items-center space-x-4 p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="100">
+          <img src="/static/joystick.png" alt="Interactive Quizzes" class="w-12 h-12">
+          <p class="text-white">Gamified learning experience with engaging quizzes.</p>
+        </div>
+        <div class="flex items-center space-x-4 p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="200">
+          <img src="/static/no-signal.png" alt="Offline Access" class="w-12 h-12">
+          <p class="text-white">Access content anytime, anywhere – even without the internet.</p>
+        </div>
+        <div class="flex items-center space-x-4 p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="300">
+          <img src="/static/particles.png" alt="Molecular Structures" class="w-12 h-12">
+          <p class="text-white">3D molecular structures for hands-on learning.</p>
+        </div>
+        <div class="flex items-center space-x-4 p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="400">
+          <img src="/static/accessability.png" alt="Inclusive Design" class="w-12 h-12">
+          <p class="text-white">Designed for all learners with accessibility in mind.</p>
+        </div>
+        <div class="flex items-center space-x-4 p-6 bg-gray-900 rounded-lg shadow-lg" data-aos="fade-up" data-aos-delay="500">
+          <img src="/static/chemistry.png" alt="Virtual Labs" class="w-12 h-12">
+          <p class="text-white">Explore virtual experiments and simulations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 px-6 bg-gradient-to-b from-gray-900 to-black">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Find Relief</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Features</p>
+      </div>
+      <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+        <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+          <div class="relative pl-16">
+            <dt class="text-base font-semibold leading-7 text-white">
+              <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                <img src="/static/ar_logo.svg" class="h-6 w-6 text-white" aria-hidden="true">
+              </div>
+              Augmented Reality Learning
+            </dt>
+            <dd class="mt-2 text-base leading-7 text-gray-300">Experience immersive AR visualizations of chemical elements and molecular structures.</dd>
+          </div>
+          <div class="relative pl-16">
+            <dt class="text-base font-semibold leading-7 text-white">
+              <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                <img src="/static/gemini.png" class="h-6 w-6 text-white" aria-hidden="true">
+              </div>
+              AI Features
+            </dt>
+            <dd class="mt-2 text-base leading-7 text-gray-300">Generate molecule structures in AR with latest Gemini 2.0 model.</dd>
+          </div>
+          <div class="relative pl-16">
+            <dt class="text-base font-semibold leading-7 text-white">
+              <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                <img src="/static/electrons.png" class="h-6 w-6 text-white" aria-hidden="true">
+              </div>
+              3D Atomic Shells
+            </dt>
+            <dd class="mt-2 text-base leading-7 text-gray-300">Visualize electron configurations and atomic structures in 3D.</dd>
+          </div>
+          <div class="relative pl-16">
+            <dt class="text-base font-semibold leading-7 text-white">
+              <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                <img src="/static/choose.png" class="h-6 w-6 text-white" aria-hidden="true">
+              </div>
+              Interactive Quizzes
+            </dt>
+            <dd class="mt-2 text-base leading-7 text-gray-300">Test your knowledge with a 60-second chemistry quiz and track your progress.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technologies Section -->
+  <section id="technologies" class="py-20 px-6 bg-gray-800">
+    <div class="mx-auto max-w-7xl lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Technologies Used</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Apple SDKs</p>
+        <p class="mt-6 text-lg leading-8 text-gray-300">Using the best of Apple SDKs to bring your learning experience to life.</p>
+      </div>
+      <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-10">
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/swift-96x96_2x.png" alt="Swift" class="mx-auto h-24">
+          <a href="https://developer.apple.com/swift/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">Swift</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/swiftui-96x96_2x.png" alt="SwiftUI" class="mx-auto h-24">
+          <a href="https://developer.apple.com/xcode/swiftui/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">SwiftUI</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/swiftdata-96x96_2x.png" alt="SwiftData" class="mx-auto h-24">
+          <a href="https://developer.apple.com/xcode/swiftdata/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">SwiftData</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/arkit-96x96_2x.png" alt="ARKit" class="mx-auto h-24">
+          <a href="https://developer.apple.com/augmented-reality/arkit/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">ARKit</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/realitykit-96x96_2x.png" alt="RealityKit" class="mx-auto h-24">
+          <a href="https://developer.apple.com/augmented-reality/realitykit/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">RealityKit</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/scenekit-128x128_2x.png" alt="SceneKit" class="mx-auto h-24">
+          <a href="https://developer.apple.com/scenekit/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">SceneKit</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/tipkit-96x96_2x.png" alt="TipKit" class="mx-auto h-24">
+          <a href="https://developer.apple.com/tipkit/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">TipKit</a>
+        </div>
+        <div class="flex flex-col items-center">
+          <img src="/static/sdks/widgetkit-96x96_2x.png" alt="SiriKit" class="mx-auto h-24">
+          <a href="https://developer.apple.com/siri/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">WidgetKit</a>
+        </div>
+      </div>
+    </div>
+    <div class="py-10"></div> <!-- Added padding between divs -->
+    <div class="mx-auto max-w-7xl lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Large language model</p>
+        <p class="mt-6 text-lg leading-8 text-gray-300">Used for generating the 3D models</p>
+      </div>
+      <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-10">
+        <div class="flex flex-col items-center">
+          <img src="/static/gemini.png" alt="Swift" class="mx-auto h-24">
+          <a href="https://gemini.google.com/" target="_blank" class="mt-2 text-center text-sm font-medium text-gray-300">Gemini 2.0 Flash</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Video Section -->
+  <section id="demo-video" class="py-20 px-6 bg-gray-900">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Watch Our Demo</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">See chemAR in Action</p>
+      </div>
+      <div class="mt-10 flex justify-center">
+        <div class="w-full max-w-4xl" style="height: 500px;">
+          <iframe class="w-full h-full rounded-lg shadow-lg" src="https://www.youtube.com/embed/rcDrbISFj2E" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="instructions" class="relative isolate overflow-hidden bg-gradient-to-l from-black to-gray-900 px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
+    <div class="absolute inset-0 -z-10 overflow-hidden">
+      <svg class="absolute left-[max(50%,25rem)] top-0 h-[64rem] w-[128rem] -translate-x-1/2 stroke-gray-700 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
+        <defs>
+          <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width="200" height="200" x="50%" y="-1" patternUnits="userSpaceOnUse">
+            <path d="M100 200V.5M.5 .5H200" fill="none" />
+          </pattern>
+        </defs>
+        <svg x="50%" y="-1" class="overflow-visible fill-gray-800">
+          <path d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z" stroke-width="0" />
+        </svg>
+        <rect width="100%" height="100%" stroke-width="0" fill="none" />
+      </svg>
+    </div>
+    <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2 lg:items-center">
+      <!-- Image on the Left (shifted left so that half is off-screen) -->
+      <div class="order-1 flex justify-center lg:justify-start lg:-translate-x-1/2">
+        <img class="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]" src="/static/ARViewLab.jpeg" alt="Instructions Illustration">
+      </div>
+      <!-- Text on the Right -->
+      <div class="order-2 mt-12 lg:mt-0 lg:pr-12">
+        <p class="text-base font-semibold leading-7 text-indigo-400">How to get started?</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Instructions</h1>
+        <div class="mt-8 space-y-6 text-gray-300">
+        <p>
+          <strong class="text-white">Point the device to some horizontal surface:</strong> Ensure your device is set up correctly and the camera is ready.
+        </p>
+        <p>
+          <strong class="text-white">Plus button:</strong> Pops up the sheet including the list of all the elements, click on either of them to add an element and its valence electrons to AR View.
+        </p>
+        <p>
+          <strong class="text-white">Select the element to bond with:</strong> Either select the element from the top bar or just point the center circle to the element in AR.
+        </p>
+        <p>
+          <strong class="text-white">Get more info:</strong> Point at the element to get more info about an element and click on the info button on the right sidebar.
+        </p>
+        <p>
+          <strong class="text-white">Set angle and bond type:</strong> Set angle and bond type and plane before selecting another element in AR.
+        </p>
+        <p>
+          <strong class="text-white">Bin button:</strong> Clears off the components in AR.
+        </p>
+        <p>
+          <strong class="text-white">Annotate in AR:</strong> Use the annotation tool to add notes and labels directly in the AR view for better understanding and reference.
+        </p>
+        </div>
+        <p class="mt-8 text-gray-300">
+        You can also find these instructions in the <strong class="text-white">Instructions</strong> tab within the app.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="contact-form" class="py-20 px-6 bg-gray-800">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Get in Touch</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Contact Us</p>
+      </div>
+
+      <div class="mt-10">
+        <form action="{{ url_for('contact') }}" method="POST" class="space-y-6">
+          {{ form.hidden_tag() }}  <!-- CSRF Token -->
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="first-name" class="block text-lg font-medium text-gray-300">First Name</label>
+              {{ form.first_name(class_="mt-1 block w-full h-12 text-lg rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-transform transform hover:scale-105") }}
+            </div>
+            <div>
+              <label for="last-name" class="block text-lg font-medium text-gray-300">Last Name</label>
+              {{ form.last_name(class_="mt-1 block w-full h-12 text-lg rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-transform transform hover:scale-105") }}
+            </div>
+          </div>
+
+          <div>
+            <label for="email" class="block text-lg font-medium text-gray-300">Email Address</label>
+            {{ form.email(class_="mt-1 block w-full h-12 text-lg rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-transform transform hover:scale-105") }}
+          </div>
+
+          <div>
+            <label for="message" class="block text-lg font-medium text-gray-300">Message</label>
+            {{ form.message(class_="mt-1 block w-full text-lg rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-transform transform hover:scale-105", rows=6) }}
+          </div>
+
+          <div class="text-center">
+            {{ form.submit(class_="mt-6 px-6 py-3 bg-indigo-600 rounded-full text-white font-semibold hover:bg-indigo-500 transition-transform transform hover:scale-105") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 px-6 bg-gray-900">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl lg:text-center">
+        <h2 class="text-base font-semibold leading-7 text-indigo-600">Frequently Asked Questions</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">FAQ</p>
+      </div>
+      <div class="mt-10 space-y-6">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h3 class="text-lg font-semibold text-white">What is chemAR?</h3>
+          <p class="mt-2 text-gray-300">chemAR is an augmented reality application designed to enhance the learning experience of chemistry through interactive visualizations and quizzes.</p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h3 class="text-lg font-semibold text-white">How do I use the app?</h3>
+          <p class="mt-2 text-gray-300">Simply point your device at a horizontal surface, select elements to add to the AR view, and interact with them using the provided tools and features.</p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h3 class="text-lg font-semibold text-white">Is chemAR free to use?</h3>
+          <p class="mt-2 text-gray-300">Yes, chemAR is completely free to use with no in-app purchases or hidden fees.</p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h3 class="text-lg font-semibold text-white">Does chemAR collect any personal data?</h3>
+          <p class="mt-2 text-gray-300">No, chemAR does not collect any personal or usage data. All content and molecular models are stored locally on your device.</p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h3 class="text-lg font-semibold text-white">What devices are supported?</h3>
+          <p class="mt-2 text-gray-300">chemAR is designed to work on iOS devices that support ARKit. Please ensure your device is compatible with ARKit for the best experience.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<div id="privacy-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay bg-black bg-opacity-50 backdrop-blur-sm">
+  <div class="bg-gray-900 rounded-lg max-w-3xl w-full p-8 relative overflow-y-auto max-h-screen shadow-2xl border border-gray-700">
+    <!-- Close Button -->
+    <button id="privacy-modal-close" class="absolute top-4 right-4 text-gray-300 hover:text-indigo-400 text-2xl transition-transform transform hover:scale-110">&times;</button>
+    <div class="text-center">
+      <h2 class="text-base font-semibold leading-7 text-indigo-500 uppercase tracking-wide">Privacy Policy</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-white">chemAR Privacy Policy</p>
+    </div>
+    <div class="mt-10 space-y-8 text-gray-300 text-lg">
+      <p>
+        This Privacy Policy describes how chemAR ("the App", "we", "our") handles data and protects your privacy.
+        By using chemAR, you agree to the practices described in this policy.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-2">Data Collection & Usage</h3>
+      <p>
+        chemAR processes and stores data sent via the description fields anonymously. This data is collected to monitor
+        the outputs generated by the LLM models and improve their performance. The prompts sent via the Lab menu, along
+        with the answers generated by the AI model, are securely stored in our database.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">LLM Model & AI Outputs</h3>
+      <p>
+        chemAR utilizes the Gemini 2.0 Flash Lite LLM model to generate AI-driven responses. Users are advised that AI-generated answers
+        may not always be accurate, and discretion is advised. The stored data is used solely for research purposes and not for any
+        commercial or marketing activities.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">User Caution & Confidentiality</h3>
+      <p>
+        Users are strongly advised not to enter any confidential, sensitive, or personally identifiable information in any
+        text fields within the app. The data stored is anonymized and only used for improving AI capabilities.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-2">No Personal Data Collection</h3>
+      <p>
+        chemAR does not collect personal information or track user activities. All content, molecular models, and AR interactions
+        are stored locally on your device.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">Camera Permissions & AR Functionality</h3>
+      <p>
+        To provide an immersive augmented reality experience, chemAR requires access to your device’s camera. The camera is used only for
+        aligning and rendering AR elements, and no images or videos are captured, stored, or transmitted externally.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">Educational Purpose Only</h3>
+      <p>
+        chemAR is designed exclusively for educational purposes. The app’s interactive molecular visualizations and augmented reality
+        experiences are intended to support chemistry learning and comprehension.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">Open Source Data</h3>
+      <p>
+        The data for chemical elements and molecular structures is sourced from reputable open data repositories. While we strive for
+        accuracy, users are encouraged to verify any critical information independently.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">Policy Updates</h3>
+      <p>
+        We may update this Privacy Policy periodically in response to legal, technical, or business developments. Changes will be
+        posted within the app, and users are encouraged to review the policy regularly.
+      </p>
+      
+      <h3 class="text-xl font-semibold text-white">Contact Information</h3>
+      <p>
+        For questions or feedback, contact us at 
+        <a href="mailto:shetkarneeraj@icloud.com" class="text-indigo-400 hover:underline">shetkarneeraj@icloud.com</a>.
+      </p>
+      
+      <p class="text-gray-500 text-sm">
+        <a href="https://www.flaticon.com/free-icons" title="chemistry icons" class="hover:underline">Icons by Freepik - Flaticon</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Footer -->
+  <footer id="contact" class="py-8 text-center bg-gray-900 text-gray-400">
+    <p>&copy; 2025 chemAR. All rights reserved.</p>
+    <div class="mt-4">
+      <p class="text-gray-400">Created by Neeraj R. Shetkar</p>
+      <a href="https://www.linkedin.com/in/ineerajrajeev" target="_blank" class="text-indigo-400 hover:underline mx-2">LinkedIn</a>
+      <a href="https://github.com/ineerajrajeev" target="_blank" class="text-indigo-400 hover:underline mx-2">GitHub</a>
+    </div>
+  </footer>
+</body>
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function () {
+      var menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Initialize AOS and Swiper when DOM is ready
+    document.addEventListener("DOMContentLoaded", function () {
+      AOS.init({ duration: 1000, easing: "ease-in-out" });
+      new Swiper(".screenshotSwiper", {
+        slidesPerView: 1,
+        spaceBetween: 10,
+        loop: true,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+      });
+      
+      // Open privacy modal if URL hash is "#privacy"
+      if (window.location.hash === "#privacy") {
+        openPrivacyModal();
+      }
+    });
+
+    // Functions to open and close Privacy Modal
+    function openPrivacyModal() {
+      document.getElementById('privacy-modal').classList.remove('hidden');
+    }
+    function closePrivacyModal() {
+      document.getElementById('privacy-modal').classList.add('hidden');
+      // Remove hash from URL after closing modal
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    }
+
+    // Open modal when Privacy Policy link is clicked (desktop)
+    document.getElementById('privacy-modal-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      openPrivacyModal();
+    });
+    // Open modal when Privacy Policy link is clicked (mobile)
+    document.getElementById('privacy-modal-btn-mobile').addEventListener('click', function(e) {
+      e.preventDefault();
+      openPrivacyModal();
+    });
+    // Close modal when close button is clicked
+    document.getElementById('privacy-modal-close').addEventListener('click', function() {
+      closePrivacyModal();
+    });
+    // Optionally, close modal if user clicks outside the content
+    document.getElementById('privacy-modal').addEventListener('click', function(e) {
+      if(e.target === this) {
+        closePrivacyModal();
+      }
+    });
+  </script>
+</html>
